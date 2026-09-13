@@ -513,7 +513,7 @@ input:focus{border-color:var(--accent)}
   <div id="homeTop">
     <img class="brandmark" alt="JohnnyTV">
     <div id="homeWhen"><span id="homeDate"></span><span id="clock"></span></div>
-    <span id="homeBuild">build 57</span>
+    <span id="homeBuild">build 58</span>
   </div>
   <div id="expiryBar"><span id="expiryText"></span><span class="x" id="expiryClose">&times;</span></div>
   <div id="homePanel">
@@ -615,6 +615,7 @@ input:focus{border-color:var(--accent)}
     <button class="iconbtn" id="splitToggle" style="margin-left:auto">Split screen</button>
     <button class="iconbtn" id="bufferToggle" title="How much video to hold back before playing"></button>
     <button class="iconbtn hidden" id="pipToggle" title="Float the picture in a corner (P)">Pop out</button>
+    <button class="iconbtn" id="fsToggle" title="Fill the screen and hide the browser bar (F)">Full screen</button>
     <button class="iconbtn" id="chanToggle">Channels</button>
   </div>
   <div id="nowNext" class="hidden"></div>
@@ -3409,6 +3410,67 @@ if (pipBtn && pipSupported()) {
   pipBtn.onclick = togglePip;
 }
 
+
+/* ---------- full screen ----------
+
+   On a phone the browser's own address bar eats the top of the picture, and in
+   landscape that is a third of the screen gone. Real fullscreen is the only
+   thing that removes it. The native control inside the video does this too, but
+   it is small, it hides itself after a few seconds, and nobody finds it - so
+   there is a plain button that says what it does.
+
+   iPhones are the exception: Safari will not put an arbitrary element
+   fullscreen, only a video, so there it asks the video directly.
+*/
+
+function inFullscreen() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+
+function toggleFullscreen() {
+  const v = pane() && pane().v;
+  if (inFullscreen()) {
+    if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    return;
+  }
+  // The whole player where the browser allows it, so the title and the channel
+  // list come along; just the video where it does not.
+  const host = $("player");
+  const req = host.requestFullscreen || host.webkitRequestFullscreen;
+  if (req && document.fullscreenEnabled !== false) {
+    req.call(host).catch(() => {
+      if (v && v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+    });
+    return;
+  }
+  if (v && v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+  else if (v && v.requestFullscreen) v.requestFullscreen().catch(() => {});
+}
+
+$("fsToggle").onclick = toggleFullscreen;
+
+/*
+ * Turning the phone sideways is the moment someone wants the whole screen, and
+ * it is also the moment the address bar is most in the way. A browser will not
+ * let a page go fullscreen on its own - that needs a tap - so this points at
+ * the button rather than pretending it can do it.
+ */
+(function landscapeHint() {
+  let hinted = false;
+  const check = () => {
+    if (hinted || inFullscreen()) return;
+    if ($("player").classList.contains("hidden")) return;
+    const landscape = window.innerWidth > window.innerHeight;
+    const phone = Math.min(window.innerWidth, window.innerHeight) < 500;
+    if (!landscape || !phone) return;
+    hinted = true;
+    zapToast("Full screen hides the browser bar");
+  };
+  window.addEventListener("orientationchange", () => setTimeout(check, 400));
+  window.addEventListener("resize", () => setTimeout(check, 400));
+})();
+
 /* ---------- the keys themselves ---------- */
 
 document.addEventListener("keydown", (e) => {
@@ -3455,6 +3517,7 @@ document.addEventListener("keydown", (e) => {
   const k = (e.key || "").toLowerCase();
   if (k === "l" && zappable()) { e.preventDefault(); return zapBack(); }
   if (k === "p") { e.preventDefault(); return togglePip(); }
+  if (k === "f") { e.preventDefault(); return toggleFullscreen(); }
 });
 
 document.addEventListener("keydown", (e) => {
