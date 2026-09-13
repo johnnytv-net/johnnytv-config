@@ -453,10 +453,12 @@ input:focus{border-color:var(--accent)}
 }
 
 /* ---------- catch-up ---------- */
-#cuHead{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--line)}
+#catchupScreen{height:100%;display:flex;flex-direction:column;min-height:0}
+#cuHead{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--line);flex:none}
 #cuHead strong{font-size:17px}
 #cuSub{color:var(--muted);font-size:13px}
-#cuBody{flex:1;overflow-y:auto;padding:8px 10px 24px}
+#cuBody{flex:1;min-height:0;overflow-y:auto;padding:8px 10px 24px}
+#cuSearch{margin-left:auto;max-width:260px}
 .curow{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:10px;cursor:pointer;border:1px solid transparent}
 .curow:hover{background:rgba(46,125,247,.12);border-color:rgba(46,125,247,.45)}
 .curow .cuname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -513,7 +515,7 @@ input:focus{border-color:var(--accent)}
   <div id="homeTop">
     <img class="brandmark" alt="JohnnyTV">
     <div id="homeWhen"><span id="homeDate"></span><span id="clock"></span></div>
-    <span id="homeBuild">build 58</span>
+    <span id="homeBuild">build 59</span>
   </div>
   <div id="expiryBar"><span id="expiryText"></span><span class="x" id="expiryClose">&times;</span></div>
   <div id="homePanel">
@@ -604,6 +606,7 @@ input:focus{border-color:var(--accent)}
     <button class="backbtn" id="cuBack">&larr; Back</button>
     <strong id="cuTitle">Catch-up</strong>
     <span id="cuSub"></span>
+    <input id="cuSearch" type="search" placeholder="Search channels">
   </div>
   <div id="cuBody"></div>
 </section>
@@ -3055,10 +3058,13 @@ function renderCatchup() {
   const body = $("cuBody");
   body.innerHTML = "";
   const token = ++cuToken;
+  // The search box only means anything on the list of channels.
+  $("cuSearch").classList.toggle("hidden", cuStep !== 0);
 
   if (cuStep === 0) {
     $("cuTitle").textContent = "Catch-up";
-    const list = archiveChannels();
+    const q = ($("cuSearch").value || "").trim().toLowerCase();
+    const list = archiveChannels().filter(c => !q || itemName("live", c).toLowerCase().indexOf(q) !== -1);
     $("cuSub").textContent = list.length
       ? list.length + (list.length === 1 ? " channel" : " channels")
       : "";
@@ -3196,6 +3202,7 @@ function playArchive(ch, p) {
 
 $("catchupBtn").onclick = () => openCatchup();
 $("cuBack").onclick = () => catchupBack();
+$("cuSearch").oninput = () => { if (cuStep === 0) renderCatchup(); };
 
 $("guideBtn").onclick = () => openGuide();
 // Search opens the channel list with the cursor already in the box, the way the
