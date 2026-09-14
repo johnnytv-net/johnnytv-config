@@ -515,7 +515,7 @@ input:focus{border-color:var(--accent)}
   <div id="homeTop">
     <img class="brandmark" alt="JohnnyTV">
     <div id="homeWhen"><span id="homeDate"></span><span id="clock"></span></div>
-    <span id="homeBuild">build 60</span>
+    <span id="homeBuild">build 61</span>
   </div>
   <div id="expiryBar"><span id="expiryText"></span><span class="x" id="expiryClose">&times;</span></div>
   <div id="homePanel">
@@ -3507,17 +3507,22 @@ const CAST_URL = "jtv-cast.php";
  */
 function castToken() {
   const seed = (state.username || "") + ":" + (state.password || "");
-  let a = 0x811c9dc5, b = 0x01000193;
+  // Math.imul, not a plain multiply. These products run past what a double can
+  // hold exactly, so an ordinary * would round - and the television, doing the
+  // same sum in a language with real 32-bit integers, would get a different
+  // answer. Nothing would ever arrive and there would be nothing to see wrong.
+  let a = 0x811c9dc5 | 0;
   for (let i = 0; i < seed.length; i++) {
-    a ^= seed.charCodeAt(i);
-    a = (a * b) >>> 0;
+    a = (a ^ seed.charCodeAt(i)) | 0;
+    a = Math.imul(a, 0x01000193);
   }
-  let c = 0x9e3779b9;
+  let c = 0x9e3779b9 | 0;
   for (let i = seed.length - 1; i >= 0; i--) {
-    c ^= seed.charCodeAt(i);
-    c = (c * 0x85ebca6b) >>> 0;
+    c = (c ^ seed.charCodeAt(i)) | 0;
+    c = Math.imul(c, 0x85ebca6b | 0);
   }
-  return (a.toString(16) + c.toString(16)).slice(0, 16);
+  const hex = x => (x >>> 0).toString(16).padStart(8, "0");
+  return hex(a) + hex(c);
 }
 
 async function castPost(fields) {
