@@ -515,7 +515,7 @@ input:focus{border-color:var(--accent)}
   <div id="homeTop">
     <img class="brandmark" alt="JohnnyTV">
     <div id="homeWhen"><span id="homeDate"></span><span id="clock"></span></div>
-    <span id="homeBuild">build 59</span>
+    <span id="homeBuild">build 60</span>
   </div>
   <div id="expiryBar"><span id="expiryText"></span><span class="x" id="expiryClose">&times;</span></div>
   <div id="homePanel">
@@ -619,6 +619,7 @@ input:focus{border-color:var(--accent)}
     <button class="iconbtn" id="bufferToggle" title="How much video to hold back before playing"></button>
     <button class="iconbtn hidden" id="pipToggle" title="Float the picture in a corner (P)">Pop out</button>
     <button class="iconbtn" id="fsToggle" title="Fill the screen and hide the browser bar (F)">Full screen</button>
+    <button class="iconbtn hidden" id="castToggle" title="Put this channel on the television">Send to TV</button>
     <button class="iconbtn" id="chanToggle">Channels</button>
   </div>
   <div id="nowNext" class="hidden"></div>
@@ -2308,6 +2309,7 @@ async function playLive(streamId, title, into) {
   // Two panes need two connections. On a line that allows one they only take
   // turns stealing it from each other, so the option is not offered at all.
   $("splitToggle").classList.toggle("hidden", state.maxConnections === 1);
+  if (typeof renderCastButton === "function") { renderCastButton(); refreshTvStatus(); }
   $("splitToggle").title = "Watch two channels side by side";
   if (pn.i === activePane) {
     $("playerTitle").textContent = title;
@@ -3477,6 +3479,113 @@ $("fsToggle").onclick = toggleFullscreen;
   window.addEventListener("orientationchange", () => setTimeout(check, 400));
   window.addEventListener("resize", () => setTimeout(check, 400));
 })();
+
+
+/* =====================================================================
+   SEND TO TV
+
+   The website and the television app never speak to each other - they are two
+   devices with no line between them. So the site acts as a letterbox: the phone
+   leaves a note saying which channel it wants, and the television picks it up a
+   few seconds later. The television leaves a note of its own saying what it is
+   showing, which is how this page can say "your TV is on TSN" instead of
+   handing somebody a dead screen on a one-connection line.
+
+   Nothing here is a login. The latch is derived from details both halves
+   already hold, so no password is ever sent to the website.
+   ===================================================================== */
+
+const CAST_URL = "jtv-cast.php";
+
+/**
+ * A short latch from the username and password.
+ *
+ * Not a cryptographic hash - crypto.subtle only exists on https pages and this
+ * one is deliberately plain http. It does not need to be: the only thing it
+ * prevents is one customer idly changing another's channel, and the worst
+ * outcome it guards against is somebody else's television turning over.
+ */
+function castToken() {
+  const seed = (state.username || "") + ":" + (state.password || "");
+  let a = 0x811c9dc5, b = 0x01000193;
+  for (let i = 0; i < seed.length; i++) {
+    a ^= seed.charCodeAt(i);
+    a = (a * b) >>> 0;
+  }
+  let c = 0x9e3779b9;
+  for (let i = seed.length - 1; i >= 0; i--) {
+    c ^= seed.charCodeAt(i);
+    c = (c * 0x85ebca6b) >>> 0;
+  }
+  return (a.toString(16) + c.toString(16)).slice(0, 16);
+}
+
+async function castPost(fields) {
+  const body = new URLSearchParams();
+  body.set("user", state.username || "");
+  body.set("t", castToken());
+  Object.keys(fields).forEach(k => body.set(k, fields[k]));
+  const r = await fetch(CAST_URL, { method: "POST", body: body, cache: "no-store" });
+  return r.json();
+}
+
+async function castPeek() {
+  const u = encodeURIComponent(state.username || "");
+  const r = await fetch(CAST_URL + "?peek=" + u + "&t=" + castToken(), { cache: "no-store" });
+  return r.json();
+}
+
+/** What the television last said it was doing, or null. */
+let tvNow = null;
+
+async function refreshTvStatus() {
+  if (!state.username) return;
+  try {
+    const d = await castPeek();
+    tvNow = (d && d.ok && d.tv && d.tv.id) ? d.tv : null;
+  } catch (e) { tvNow = null; }
+  renderCastButton();
+}
+
+function renderCastButton() {
+  const btn = $("castToggle");
+  if (!btn) return;
+  // Only worth offering while a live channel is on screen.
+  const on = zappable();
+  btn.classList.toggle("hidden", !on);
+  btn.textContent = "Send to TV";
+  btn.title = tvNow
+    ? "Your TV is on " + tvNow.name + " - this will change it"
+    : "Put this channel on the television";
+}
+
+async function sendToTv() {
+  if (!zappable()) return;
+  const pn = pane();
+  const name = pn.title || "";
+  const btn = $("castToggle");
+  btn.textContent = "Sending...";
+  try {
+    const d = await castPost({ action: "send", id: String(pn.channelId), name: name });
+    if (d && d.ok) {
+      zapToast("Sent to TV");
+      btn.textContent = "Sent";
+      setTimeout(renderCastButton, 2500);
+    } else {
+      zapToast("TV did not accept");
+      setTimeout(renderCastButton, 2500);
+    }
+  } catch (e) {
+    zapToast("Could not reach the TV");
+    setTimeout(renderCastButton, 2500);
+  }
+}
+
+$("castToggle").onclick = sendToTv;
+
+// Checked when a channel opens and every half minute after, which is often
+// enough to be useful and rare enough to cost nothing.
+setInterval(() => { if (!$("player").classList.contains("hidden")) refreshTvStatus(); }, 30000);
 
 /* ---------- the keys themselves ---------- */
 
