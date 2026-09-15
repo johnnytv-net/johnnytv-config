@@ -515,7 +515,7 @@ input:focus{border-color:var(--accent)}
   <div id="homeTop">
     <img class="brandmark" alt="JohnnyTV">
     <div id="homeWhen"><span id="homeDate"></span><span id="clock"></span></div>
-    <span id="homeBuild">build 62</span>
+    <span id="homeBuild">build 63</span>
   </div>
   <div id="expiryBar"><span id="expiryText"></span><span class="x" id="expiryClose">&times;</span></div>
   <div id="homePanel">
@@ -787,7 +787,21 @@ class Blocked extends Error {}
  * request that never finishes is never counted out again. Four of those and the
  * guide stops populating entirely, with nothing on screen to say why.
  */
+/**
+ * Three limits, because one number cannot be right for all of this.
+ *
+ * FAST is for the guide: a single programme listing is a few hundred bytes, and
+ * a portal that has not produced one in six seconds is not about to. This is the
+ * call that repeats hundreds of times and the only one that can jam the queue,
+ * so it gets the short leash.
+ *
+ * BULK is for the catalogue - three thousand channels and every film and series
+ * in one response each. Those legitimately take a while on a weak connection,
+ * and cutting them short would turn a slow sync into a failed one.
+ */
 const API_TIMEOUT_MS = 15000;
+const API_TIMEOUT_FAST_MS = 6000;
+const API_TIMEOUT_BULK_MS = 60000;
 
 async function api(params, timeoutMs) {
   let res;
@@ -918,7 +932,7 @@ async function epgRows(streamId, limit) {
   // Caching the failure was what made a blank row permanent: one bad moment and
   // that channel had no guide for the next ten minutes, however often you looked.
   const data = await epgGate(() =>
-    api({ action: "get_short_epg", stream_id: streamId, limit: limit }));
+    api({ action: "get_short_epg", stream_id: streamId, limit: limit }, API_TIMEOUT_FAST_MS));
 
   const list = (data && data.epg_listings) || [];
   learnPortalOffset(list);
@@ -1262,18 +1276,18 @@ async function syncCatalog() {
   ["live", "vod", "series"].forEach(s => setStep(s, "waiting"));
 
   setStep("live", "loading…");
-  state.liveCats = inPreferredOrder(await api({ action: "get_live_categories" }) || []);
-  state.live = await api({ action: "get_live_streams" }) || [];
+  state.liveCats = inPreferredOrder(await api({ action: "get_live_categories" }, API_TIMEOUT_BULK_MS) || []);
+  state.live = await api({ action: "get_live_streams" }, API_TIMEOUT_BULK_MS) || [];
   setStep("live", state.live.length.toLocaleString() + " channels", true);
 
   setStep("vod", "loading…");
-  state.vodCats = await api({ action: "get_vod_categories" }) || [];
-  state.vod = await api({ action: "get_vod_streams" }) || [];
+  state.vodCats = await api({ action: "get_vod_categories" }, API_TIMEOUT_BULK_MS) || [];
+  state.vod = await api({ action: "get_vod_streams" }, API_TIMEOUT_BULK_MS) || [];
   setStep("vod", state.vod.length.toLocaleString() + " films", true);
 
   setStep("series", "loading…");
-  state.seriesCats = await api({ action: "get_series_categories" }) || [];
-  state.series = await api({ action: "get_series" }) || [];
+  state.seriesCats = await api({ action: "get_series_categories" }, API_TIMEOUT_BULK_MS) || [];
+  state.series = await api({ action: "get_series" }, API_TIMEOUT_BULK_MS) || [];
   setStep("series", state.series.length.toLocaleString() + " series", true);
 
   openHome();
@@ -3173,7 +3187,7 @@ function renderCatchup() {
  */
 async function catchupListings(ch) {
   const id = itemId("live", ch);
-  const data = await api({ action: "get_simple_data_table", stream_id: id });
+  const data = await api({ action: "get_simple_data_table", stream_id: id }, API_TIMEOUT_FAST_MS);
   const list = (data && data.epg_listings) || [];
   learnPortalOffset(list);
   return list.map(e => {
