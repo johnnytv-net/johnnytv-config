@@ -515,7 +515,7 @@ input:focus{border-color:var(--accent)}
   <div id="homeTop">
     <img class="brandmark" alt="JohnnyTV">
     <div id="homeWhen"><span id="homeDate"></span><span id="clock"></span></div>
-    <span id="homeBuild">build 61</span>
+    <span id="homeBuild">build 62</span>
   </div>
   <div id="expiryBar"><span id="expiryText"></span><span class="x" id="expiryClose">&times;</span></div>
   <div id="homePanel">
@@ -778,12 +778,30 @@ function apiUrl(params) {
  */
 class Blocked extends Error {}
 
-async function api(params) {
+/**
+ * Nothing may hang for ever.
+ *
+ * A portal that accepts the connection and then goes quiet leaves fetch waiting
+ * with no error and no end - the browser will sit on it for minutes. That alone
+ * was enough to jam the guide: the queue below counts requests in flight, and a
+ * request that never finishes is never counted out again. Four of those and the
+ * guide stops populating entirely, with nothing on screen to say why.
+ */
+const API_TIMEOUT_MS = 15000;
+
+async function api(params, timeoutMs) {
   let res;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs || API_TIMEOUT_MS);
   try {
-    res = await fetch(apiUrl(params), { cache: "no-store" });
+    res = await fetch(apiUrl(params), { cache: "no-store", signal: ctrl.signal });
   } catch (e) {
+    // A timeout is a slow portal, not a blocked one - saying "your portal will
+    // not talk to this page" would send somebody chasing the wrong problem.
+    if (e && e.name === "AbortError") throw new Error("The portal did not answer in time.");
     throw new Blocked();
+  } finally {
+    clearTimeout(timer);
   }
   if (!res.ok) throw new Error("The portal returned an error (" + res.status + ").");
   const text = await res.text();
@@ -864,8 +882,24 @@ function pumpEpg() {
   while (epgBusy < EPG_AT_ONCE && epgQueue.length) {
     const t = epgQueue.shift();
     epgBusy++;
-    t.job().then(t.resolve, t.reject).then(() => { epgBusy--; pumpEpg(); });
+    // Belt and braces around the counter. A job that throws before it returns a
+    // promise, or a handler that throws while settling one, would otherwise take
+    // a slot to the grave - and four lost slots is a guide that never fills in
+    // again until the page is reloaded.
+    let running;
+    try {
+      running = Promise.resolve(t.job());
+    } catch (e) {
+      running = Promise.reject(e);
+    }
+    running.then(t.resolve, t.reject).then(releaseEpgSlot, releaseEpgSlot);
   }
+}
+
+function releaseEpgSlot() {
+  epgBusy--;
+  if (epgBusy < 0) epgBusy = 0;
+  pumpEpg();
 }
 
 /** What is on this channel now and next. */
