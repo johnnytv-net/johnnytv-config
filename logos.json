@@ -2429,5 +2429,12 @@
  "SP-HPITV INTERNATIONAL*": "https://upload.wikimedia.org/wikipedia/en/b/b4/HPI_TV_2015.png",
  "SP-HPITV WEST*": "https://upload.wikimedia.org/wikipedia/en/b/b4/HPI_TV_2015.png",
  "SP-HPITV*": "https://i.imgur.com/6lhdgA1.png",
- "MSG 2 Plus": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/united-states/msg-plus-2-us.png"
+ "MSG 2 Plus": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/united-states/msg-plus-2-us.png",
+ "CANADA DAZN*": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/canada/dazn-ca.png",
+ "CANADA NETFLIX*": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/misc/media/netflix.png",
+ "CANADA FLO*": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/misc/media/flosports.png",
+ "CANADA TENNIS*": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/united-states/tennis-channel-us.png",
+ "CANADA AHL*": "https://raw.githubusercontent.com/johnnytv-net/johnnytv-config/main/logos/ahl.png",
+ "CANADA MILB*": "https://raw.githubusercontent.com/johnnytv-net/johnnytv-config/main/logos/milb.png",
+ "AMERICA DAZN*": "https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/canada/dazn-ca.png"
 }
