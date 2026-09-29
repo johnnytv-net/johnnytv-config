@@ -5,7 +5,7 @@
     "aHR0cDovL2VkZ2Uuc2I="
   ],
   "notice": "",
-  "latest_version_code": 131,
+  "latest_version_code": 132,
   "download_url": "https://github.com/johnnytv-net/johnnytv-app/releases/latest/download/JohnnyTV.apk",
   "force_update": false,
   "lineups": {
@@ -174,6 +174,44 @@
         "UK: Asia",
         "CA: Canada FR",
         "24/7"
+      ],
+      "hide_series": [
+        "Series-Music",
+        "Series-Romance",
+        "Series-Thriller",
+        "Arabic Animation Series",
+        "Egypt Series",
+        "Syria Series",
+        "Turkish Series Translated to Arabic",
+        "English Series Translated to Arabic",
+        "Series Greece",
+        "Germany Series",
+        "Sports Series",
+        "Multi-Sub Series",
+        "French Series",
+        "NetFlix Series (Multi-Lang)",
+        "Saudi Arabia Series",
+        "Italian Series",
+        "Iraq Series",
+        "Kuwait Series",
+        "Korean Series Translated to Arabic",
+        "Ramadan Series 2026",
+        "French Series Translated to Arabic",
+        "Server *"
+      ],
+      "hide_movies": [
+        "Movies-Music festivals",
+        "Movies-Concerts",
+        "Movies-Classic",
+        "Movies-Lifetime",
+        "Movies-Bollywood",
+        "Movies-HBO",
+        "Movies French",
+        "Movies-UFC Fight Nights",
+        "Movies Turkey",
+        "Adult*",
+        "VOD Adults",
+        "Server *"
       ]
     }
   }
