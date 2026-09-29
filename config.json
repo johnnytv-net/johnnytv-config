@@ -15,7 +15,8 @@
         "Adults*",
         "NFHS Network",
         "USA Latin*",
-        "Server *"
+        "Server *",
+        "USA Religion"
       ],
       "merge": [
         {
@@ -34,7 +35,14 @@
             "Sport NCAA Women Basketball",
             "Sport NJCAA Men Basketball",
             "Sport NJCAA Women Basketball",
-            "NCAAF Back-up"
+            "NCAAF Back-up",
+            "USA WNBA",
+            "Winter Olympics",
+            "Sport College Baseball",
+            "Sport Match Center",
+            "Sport Softball",
+            "USA SEC+ ACC EXTRA",
+            "Hockey Special Events"
           ]
         },
         {
@@ -44,7 +52,8 @@
             "CA: Canada Entertainment",
             "CA: Canada General",
             "CA: Canada Cinema",
-            "CA: Canada News"
+            "CA: Canada News",
+            "CA: Canada Kids"
           ]
         },
         {
@@ -66,7 +75,8 @@
           "into": "PPV",
           "from": [
             "Pay Per View Events",
-            "PPV-MMA/BOXING/WWE/UFC"
+            "PPV-MMA/BOXING/WWE/UFC",
+            "PPV FLOSPORTS"
           ]
         },
         {
@@ -81,6 +91,20 @@
             "UK: Entertainment",
             "UK: Religion",
             "IRE: Ireland General"
+          ]
+        },
+        {
+          "into": "USA Entertainment",
+          "from": [
+            "USA Entertainment",
+            "Premium Shows",
+            "USA STIRR TV"
+          ]
+        },
+        {
+          "into": "24/7",
+          "from": [
+            "24/7*"
           ]
         }
       ],
