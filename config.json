@@ -6,6 +6,151 @@
   ],
   "notice": "",
   "latest_version_code": 129,
-  "download_url": "https://github.com/johnnytv-net/johnnytv-app/releases/download/v5.97/JohnnyTV.apk",
-  "force_update": false
+  "download_url": "https://github.com/johnnytv-net/johnnytv-app/releases/download/v5.98/JohnnyTV.apk",
+  "force_update": false,
+  "lineups": {
+    "http://edge.sb": {
+      "hide": [
+        "24/7 Adult",
+        "Adults*",
+        "NFHS Network",
+        "USA Latin*",
+        "Server *"
+      ],
+      "merge": [
+        {
+          "into": "SPORTS",
+          "from": [
+            "USA Sports",
+            "UK: Sport",
+            "Sport Cricket",
+            "Sport Lacrosse",
+            "Sport Tennis",
+            "Sport NBA G League",
+            "Sport Handball",
+            "Sport Rugby",
+            "Sport Cycling",
+            "Sport NCAA Men Basketball",
+            "Sport NCAA Women Basketball",
+            "Sport NJCAA Men Basketball",
+            "Sport NJCAA Women Basketball",
+            "NCAAF Back-up"
+          ]
+        },
+        {
+          "into": "CANADA",
+          "from": [
+            "CA: Canada Local",
+            "CA: Canada Entertainment",
+            "CA: Canada General",
+            "CA: Canada Cinema",
+            "CA: Canada News"
+          ]
+        },
+        {
+          "into": "CANADA SPORTS",
+          "from": [
+            "CA: Canada Super Sports",
+            "CA: Canada Sports",
+            "CA: Sportsnet +"
+          ]
+        },
+        {
+          "into": "NEWS",
+          "from": [
+            "USA News",
+            "UK: News"
+          ]
+        },
+        {
+          "into": "PPV",
+          "from": [
+            "Pay Per View Events",
+            "PPV-MMA/BOXING/WWE/UFC"
+          ]
+        },
+        {
+          "into": "FORMULA 1",
+          "from": [
+            "Sports Motorsports"
+          ]
+        },
+        {
+          "into": "UNITED KINGDOM",
+          "from": [
+            "UK: Entertainment",
+            "UK: Religion",
+            "IRE: Ireland General"
+          ]
+        }
+      ],
+      "move": [
+        {
+          "into": "PPV",
+          "channels": [
+            "USA UFC Fight Pass",
+            "USA UFC Channel",
+            "USA Fight Network",
+            "USA Boxing TV",
+            "USA HBO Boxing",
+            "USA DAZN Ringside"
+          ]
+        },
+        {
+          "into": "FORMULA 1",
+          "channels": [
+            "UK SkySports F1",
+            "UK Sky Sports F1 UHD",
+            "MOTORSPORT *"
+          ]
+        }
+      ],
+      "order": [
+        "USA Local Channels ( Full List )",
+        "USA Local - NBC",
+        "USA Local - ABC",
+        "USA Local - CBS",
+        "USA Local - FOX",
+        "USA Local - MISC",
+        "USA Entertainment",
+        "NEWS",
+        "SPORTS",
+        "CANADA",
+        "CANADA SPORTS",
+        "USA NCAAF",
+        "USA MLB",
+        "USA NHL",
+        "USA NBA",
+        "USA NFL - Sunday Ticket",
+        "USA NBC Sports",
+        "USA Bein Sports",
+        "USA BIG10+",
+        "USA MILB",
+        "ESPN Events 200 VIP channels",
+        "Sports DAZN",
+        "PPV",
+        "FORMULA 1",
+        "Sport Golf",
+        "Soccer Special Events",
+        "UK: EPL Games",
+        "Replay Premier League",
+        "FANATIZ",
+        "USA Movies Channels",
+        "USA Peacock Network",
+        "USA Family & Kids",
+        "USA Documentary",
+        "USA Music",
+        "Radio",
+        "CHRISTMAS",
+        "UNITED KINGDOM",
+        "UK: Movies",
+        "UK: Music",
+        "UK: Kids",
+        "UK: Documentary",
+        "UK: Asia",
+        "CA: Canada FR",
+        "24/7"
+      ]
+    }
+  }
 }
