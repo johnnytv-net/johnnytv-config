@@ -2,10 +2,11 @@
   "servers": [
     "aHR0cDovL2VkZ2UuYno6ODA4MA==",
     "aHR0cDovL2xpbmUuYnEtbGluZXMub3Jn",
-    "aHR0cDovL2VkZ2Uuc2I="
+    "aHR0cDovL2VkZ2Uuc2I=",
+    "aHR0cDovL3Zwbi5qb3k4ay50b3A="
   ],
   "notice": "",
-  "latest_version_code": 134,
+  "latest_version_code": 135,
   "download_url": "https://github.com/johnnytv-net/johnnytv-app/releases/latest/download/JohnnyTV.apk",
   "force_update": false,
   "lineups": {
