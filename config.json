@@ -6,7 +6,7 @@
     "aHR0cDovL3Zwbi5qb3k4ay50b3A="
   ],
   "notice": "",
-  "latest_version_code": 135,
+  "latest_version_code": 136,
   "download_url": "https://github.com/johnnytv-net/johnnytv-app/releases/latest/download/JohnnyTV.apk",
   "force_update": false,
   "lineups": {
@@ -213,6 +213,18 @@
         "Adult*",
         "VOD Adults",
         "Server *"
+      ]
+    },
+    "http://line.bq-lines.org": {
+      "hide_channels": [
+        "#####*",
+        "CA - TORONTO 360"
+      ]
+    },
+    "http://vpn.joy8k.top": {
+      "hide_channels": [
+        "#####*",
+        "CA - TORONTO 360"
       ]
     }
   }
