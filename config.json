@@ -218,13 +218,15 @@
     "http://line.bq-lines.org": {
       "hide_channels": [
         "#####*",
-        "CA - TORONTO 360"
+        "CA - TORONTO 360",
+        "USA - SONY MOVIES (F)"
       ]
     },
     "http://vpn.joy8k.top": {
       "hide_channels": [
         "#####*",
-        "CA - TORONTO 360"
+        "CA - TORONTO 360",
+        "USA - SONY MOVIES (F)"
       ]
     }
   }
