@@ -6,9 +6,11 @@
     "aHR0cDovL3Zwbi5qb3k4ay50b3A="
   ],
   "notice": "",
-  "latest_version_code": 146,
+  "latest_version_code": 152,
   "download_url": "https://github.com/johnnytv-net/johnnytv-app/releases/latest/download/JohnnyTV.apk",
   "force_update": false,
+  "steady_live": false,
+  "steady_live_testers": true,
   "start_timing": true,
   "lineups": {
     "http://edge.bz:8080": {
