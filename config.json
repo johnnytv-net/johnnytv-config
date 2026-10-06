@@ -9,7 +9,7 @@
   "latest_version_code": 164,
   "download_url": "https://github.com/johnnytv-net/johnnytv-app/releases/latest/download/JohnnyTV.apk",
   "force_update": false,
-  "steady_live": false,
+  "steady_live": true,
   "steady_live_testers": true,
   "start_timing": true,
   "lineups": {
